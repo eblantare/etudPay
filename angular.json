@@ -26,9 +26,14 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.scss"
+             "styles": [
+             "src/styles.scss"
             ],
+            "stylePreprocessorOptions": {
+            "includePaths": [
+            "src"
+           ]
+          },
             "server": "src/main.server.ts",
             "outputMode": "server",
             "ssr": {
@@ -85,12 +90,20 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.scss"
-            ]
+             "styles": [
+             "src/styles.scss"
+             ],
+            "stylePreprocessorOptions": {
+            "includePaths": [
+            "src"
+           ]
+          }
           }
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "957a882f-14b8-4347-bc3a-d3d13b291758"
   }
 }
