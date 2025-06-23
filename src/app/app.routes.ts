@@ -6,27 +6,36 @@ import { Login } from './login/login';
 import { Profile } from './profile/profile';
 import { Dashboard } from './dashboard/dashboard';
 import { Student } from './student/student';
-import { Payement } from './payement/payement';
+import { PayementComponent } from './payement/payementComponent';
 import { AdminTemplate } from './admin-template/admin-template';
 import { AuthGuard } from './guards/auth-guard';
+import { AutorizationGuards } from './guards/autorizationGuards';
 
 
 export const routes: Routes = [
-    {path : "", component : AdminTemplate,
+    { path: 'login', component: Login }, // page publique
+        {path : "", component : AdminTemplate,canActivate:[AuthGuard],
         
         children : [
                 // {path : "", component : Login},
-                 {path : "admin", component : AdminTemplate,canActivate:[AuthGuard],},   
+                //  {path : "admin", component : AdminTemplate,},   
                 // {path : "login", component : Login},
                 {path : "home", component : Home},
                 {path : "profile",component : Profile},
-                {path : "load-student", component : LoadStudent},
-                {path : "load-payement", component : LoadPayement},
+                {path : "load-student", component : LoadStudent,
+                    canActivate:[AutorizationGuards],data:{roles:['ADMIN']}
+                },
+                {path : "load-payement", component : LoadPayement,
+                    canActivate:[AutorizationGuards],data:{roles:['ADMIN']}
+                },
+                     
                 {path : "dashboard", component : Dashboard},
                 {path : "student", component : Student},
-                {path : "payement", component : Payement},
-                { path: '', redirectTo: 'login', pathMatch: 'full' },
+                {path : "payement", component : PayementComponent},
+                { path: '', redirectTo: 'login', pathMatch: 'full' },// par défaut vers home au sein de l'admin
+
         ]
     },
-                 { path: 'login', component: Login }
+                 
+                 { path: '**', redirectTo: 'login' }    // gestion des routes inconnues
 ];

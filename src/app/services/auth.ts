@@ -32,9 +32,9 @@ export class Auth {
 
   ]);
   private userRoles = new Map<string,string[]>([
-    ['admin',['admin','superUser']],
-    ['user',['user']],
-    ['other',['other']]
+    ['admin',['ADMIN','SUPERUSER']],
+    ['user',['USER']],
+    ['other',['OTHER']]
 
   ]);
 
@@ -55,7 +55,7 @@ export class Auth {
     console.log('Service login called with:', username, password);
     const validPassword = this.userCredentials.get(username);
 
-    if (validPassword && password === password) {
+    if (validPassword && password === validPassword) {
       this.username=username;
       this.isAuthenticated=true;
       this.roles = this.userRoles.get(username) || [];

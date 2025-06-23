@@ -5,7 +5,7 @@
   <span style="flex: auto"></span>
   <button mat-button [routerLink]="['home']">Home</button> 
   <button mat-button [routerLink]="['profile']">Profile</button>
-  <button mat-button [matMenuTriggerFor]="importMenu">
+  <button mat-button [matMenuTriggerFor]="importMenu" *ngIf="authService.roles.includes('ADMIN')">
     <mat-icon iconPositionEnd>keyboard_arrow_down</mat-icon>
     Import
 </button>
@@ -50,5 +50,6 @@
 
           </router-outlet>
         </div>
+        
     </mat-drawer-content>
 </mat-drawer-container>
