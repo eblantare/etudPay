@@ -5,7 +5,7 @@
   <span style="flex: auto"></span>
   <button mat-button [routerLink]="['home']">Home</button> 
   <button mat-button [routerLink]="['profile']">Profile</button>
-  <button mat-button [matMenuTriggerFor]="importMenu" *ngIf="authService.roles.includes('ADMIN')">
+  <button mat-button [matMenuTriggerFor]="importMenu" *ngIf="authService.roles.includes('ROLE_ADMIN')">
     <mat-icon iconPositionEnd>keyboard_arrow_down</mat-icon>
     Import
 </button>
@@ -17,6 +17,7 @@
     {{authService.username}}
   </button>
   <button mat-button class="logout-button" (click)="logout()">
+    <mat-icon>person_outline</mat-icon>
     Logout
 </button>
 

@@ -1,0 +1,30 @@
+::ng::speed .custom-dialog-container {
+    width: 700px !important;
+    max-width: 95vw;
+    height: auto;
+}
+.form-grid{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    mat-form-field{
+        flex: 1 1 calc(50% - 16px);// Deux par ligne avec un petit écart
+        min-width: 200px;// Pour éviter que ça s’écrase sur petits écrans
+
+    }
+}
+
+.bouton-group{
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.form-header{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-bottom: 1rem;
+}

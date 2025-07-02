@@ -1,8 +1,7 @@
 import { provideCloudinaryLoader } from "@angular/common";
 import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot, CanActivate, GuardResult, MaybeAsync, RouterStateSnapshot } from "@angular/router";
+import { ActivatedRouteSnapshot, CanActivate,Router, RouterStateSnapshot } from "@angular/router";
 import { Auth } from "../services/auth";
-import { Router } from "@angular/router";
 
 @Injectable({providedIn:'root'})
 export class AutorizationGuards implements CanActivate{
@@ -12,27 +11,26 @@ export class AutorizationGuards implements CanActivate{
     }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): 
-    MaybeAsync<GuardResult> {
-        if(this.authService.isAuthenticated){
+    boolean {
+        if(!this.authService.isAuthenticated){
+            this.router.navigateByUrl('/login');
+            return false;
+        }
             const requiredRoles = route.data['roles'];
             const userRoles:string[] = this.authService.roles;
             //si aucun role requis, autoriser l'accès
-            if(!requiredRoles){
+            if(!requiredRoles || requiredRoles.length == 0){
                 return true;
             }
-            for(let role of userRoles){
-                if(requiredRoles.includes(role))
-                    {
-                        return true;
-                    }
-            }
-            return false;
-        }
-        else{
-            this.router.navigateByUrl('/login')
-            return false;
-        }
-        
+             // Vérifier si au moins un rôle est présent
+             return userRoles.some(role => requiredRoles.includes(role));
+            // for(let role of userRoles){
+            //     if(requiredRoles.includes(role))
+            //         {
+            //             return true;
+            //         }
+            // }
+            // return false;
     }
 
 }

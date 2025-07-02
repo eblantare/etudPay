@@ -43,19 +43,29 @@ export class Login implements OnInit{
     let username = this.Loginform.value.username;
     let password = this.Loginform.value.password;
     console.log('username:', username, 'password:', password);
-    let authen:boolean=this.authService.login(username,password);
-    if(authen==true){
-      this.router.navigateByUrl("/home");
-      console.log('Authentication successful, navigating...');
-    }else{
-       console.log('Authentication failed');
-//     }
+    // let authen:boolean=this.authService.login(username,password);//ancien partie en dur
+    this.authService.login(username,password).then(
+      sucess => {
+        console.log('Authenticated user ',sucess);
+        if(sucess){this.router.navigateByUrl("/home");
+        }else{
+          console.log('Echec de l\'authentication' );
+        }
+        
+      });
+    };
+    // if(authen==true){
+      // this.router.navigateByUrl("/home");
+      // console.log('Authentication successful, navigating...');
+//     }else{
+//        console.log('Authentication failed');
+// //     }
 //     if (username === 'admin' && password === '1234') {
 //   console.log('Login OK');
 //   this.router.navigate(['/home']); // ou autre route valide
 // } else {
 //   console.log('Login FAIL');
 }
-  }
+  
 
-}
+

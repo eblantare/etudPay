@@ -1,0 +1,72 @@
+<h2 mat-dialog-title>{{dialogTitle}}</h2>
+<mat-dialog-content [formGroup]="payementForm">
+    <div class="form-header">
+        <button mat-icon-button color="warn" (click)="onCancel()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+    <div class="form-grid">
+     <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Date</mat-label>
+    <input matInput formControlName="date" [matDatepicker]="picker"/>
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+    <!-- <mat-error *ngIf="payementForm.get('date')?.hasError('required')">La date est requise</mat-error> -->
+  </mat-form-field>
+  <mat-form-field class="full-width" appearance="fill">
+    <mat-label>Amount</mat-label>
+    <input matInput formControlName="amount" type="number"/>
+    <!-- <mat-error *ngIf="payementForm.get('amount')?.hasError('required')">Le montant est requis</mat-error> -->
+  </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Type</mat-label>
+      <mat-select *ngIf="typeOptions.length>0" formControlName="type">
+        <mat-option *ngFor="let option of typeOptions" [value]="option">{{ option }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Statut</mat-label>
+      <mat-select *ngIf="typeOptions.length>0" formControlName="statut">
+        <mat-option *ngFor="let s of statutOptions" [value]="s">{{ s }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+  <mat-form-field class="full-width" appearance="fill">
+    <mat-label>Student</mat-label>
+      <mat-select (selectionChange)="onStudentSelect($event)" formControlName="student" required>
+        <mat-option *ngFor="let student of studentNames" [value]="student">
+          {{ student.firstname }} {{student.lastname}}</mat-option>
+      </mat-select>
+    <!-- <mat-error *ngIf="payementForm.get('firstname')?.hasError('required')">Le nom est réquis</mat-error> -->
+  </mat-form-field>
+
+  <!-- <mat-form-field class="full-width" appearance="fill">
+    <mat-label>Last Name</mat-label>
+          <mat-select *ngIf="studentNames.length>0" formControlName="lastname">
+        <mat-option *ngFor="let su of studentNames" [value]="su.lastname">{{ su.lastname }}</mat-option>
+      </mat-select> -->
+    <!-- <mat-error *ngIf="payementForm.get('lastname')?.hasError('required')">Le(s) prénom(s) est(sont) requis</mat-error> -->
+  <!-- </mat-form-field> -->
+
+<div class="full-width" style="display: flex; align-items: center; gap: 10px;">
+  <button mat-raised-button color="primary" (click)="fileInput.click()">
+    <mat-icon>attach_file</mat-icon> Joindre un fichier
+  </button>
+  <input #fileInput type="file" (change)="onFileChange($event)"  accept="application/pdf" style="display: none;"/> 
+  <div *ngIf="selectedFile">{{ selectedFile.name }}</div>
+</div>
+    <!-- <span *ngIf="selectedFile" style="margin-left: 10px;">{{selectedFile.name}}</span> -->
+  </div>
+  
+  <div class="bouton-group">
+    <mat-dialog-actions align="end">
+        <button mat-button color="warn" (click)="onClear()">Annuler</button>
+        <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="payementForm.invalid">
+            Ajouter
+        </button>
+    </mat-dialog-actions>
+</div>
+</mat-dialog-content>
+

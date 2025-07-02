@@ -20,13 +20,13 @@ export const routes: Routes = [
                 // {path : "", component : Login},
                 //  {path : "admin", component : AdminTemplate,},   
                 // {path : "login", component : Login},
-                {path : "home", component : Home},
+                {path : "home", component : Home,canActivate:[AuthGuard]},
                 {path : "profile",component : Profile},
                 {path : "load-student", component : LoadStudent,
-                    canActivate:[AutorizationGuards],data:{roles:['ADMIN']}
+                    canActivate:[AutorizationGuards],data:{roles:['ROLE_ADMIN']}
                 },
                 {path : "load-payement", component : LoadPayement,
-                    canActivate:[AutorizationGuards],data:{roles:['ADMIN']}
+                    canActivate:[AutorizationGuards],data:{roles:['ROLE_ADMIN']}
                 },
                      
                 {path : "dashboard", component : Dashboard},

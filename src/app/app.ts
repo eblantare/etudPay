@@ -14,7 +14,7 @@ import { AutorizationGuards } from './guards/autorizationGuards';
             
           ],
   providers:[
-    AuthGuard,AutorizationGuards
+    AuthGuard,AutorizationGuards,
   ],
   
   templateUrl: './app.html',

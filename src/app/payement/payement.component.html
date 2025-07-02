@@ -9,14 +9,19 @@
             
         </mat-divider>
         <mat-card-content>
-  <mat-form-field appearance="fill" style="width: 100%; margin-bottom: 10px;">
+  <mat-form-field appearance="fill" style="width: 100%; margin-bottom: 10px;" class="full-width">
   <mat-label>Filter</mat-label>
-  <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
-</mat-form-field> 
+  <input matInput (keyup)="applyFilter($event)" placeholder="exemple" [(ngModel)]="exemple" #input>
+</mat-form-field>
 
 <div class="mat-elevation-z1">
+  <button mat-button *ngIf="authService.roles.includes('ROLE_ADMIN')">
+    <mat-icon matTooltip="Ajouter paiement" matTooltipPosition="above" 
+    style="font-size: 25px; color: green;" (click)="openAddDialog()">add
+    </mat-icon>
+  </button>
   <table mat-table [dataSource]="dataSource" matSort>
-
+    
     <!-- ID Column -->
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
@@ -45,17 +50,38 @@
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
       <td mat-cell *matCellDef="let row"> {{row.statut}} </td>
     </ng-container>
+     <!-- file column -->
+    <ng-container matColumnDef="file">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Ticket </th>
+      <td mat-cell *matCellDef="let row"> {{row.file}} </td>
+    </ng-container>
      <!-- firstname column -->
     <ng-container matColumnDef="firstname">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Student First Name </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Nom </th>
       <td mat-cell *matCellDef="let element"> {{ element?.firstname }} </td>
 
     </ng-container>
   <!-- lastname column -->
     <ng-container matColumnDef="lastname">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Student Last Name </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Prénoms </th>
       <td mat-cell *matCellDef="let element"> {{ element?.lastname }} </td>
     </ng-container> 
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Actions </th>
+      
+      <td mat-cell *matCellDef="let row">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <mat-icon [style.color]="my_color1" matTooltip="Détail" matTooltipPosition="above">visibility</mat-icon>
+            <mat-icon [style.color]="my_color3" matTooltip="Edition" matTooltipPosition="above">edit</mat-icon>
+            <mat-icon [style.color]="my_color2"
+              matTooltip="Suppression"
+              matTooltipPosition="above" (click)="onDelete(row.id)">
+              delete_sweep</mat-icon>
+        </div>
+      </td>
+      
+    </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns; trackBy: trackById"></tr>
