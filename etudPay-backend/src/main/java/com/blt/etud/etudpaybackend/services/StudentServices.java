@@ -13,6 +13,7 @@ import com.blt.etud.etudpaybackend.entities.Student;
 public class StudentServices {
 	private StudentDto dto;
 	public StudentDto stutDto(Student student) {
+		System.out.println("ID***************** "+student.getId());
 		return StudentDto.builder()
 				.id(student.getId())
 				.firstname(student.getFirstname())

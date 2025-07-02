@@ -2,19 +2,15 @@ package com.blt.etud.etudpaybackend.web;
 
 
 import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,17 +22,19 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.blt.etud.etudpaybackend.dtos.PayementOptionsDto;
 import com.blt.etud.etudpaybackend.dtos.PayementsDto;
 import com.blt.etud.etudpaybackend.entities.PayementStatut;
 import com.blt.etud.etudpaybackend.entities.PayementType;
 import com.blt.etud.etudpaybackend.entities.Payements;
-import com.blt.etud.etudpaybackend.entities.Student;
 import com.blt.etud.etudpaybackend.repositories.PayementRepository;
 import com.blt.etud.etudpaybackend.repositories.StudentRepository;
 import com.blt.etud.etudpaybackend.services.PayementsServices;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+
+
 
 @CrossOrigin("*")
 @RequiredArgsConstructor
@@ -45,7 +43,6 @@ import lombok.RequiredArgsConstructor;
 public class PayementsRestController {
 
 	private final PayementRepository payementRepository;
-	private final StudentRepository studentRepository; 
 	
 	private final PayementsServices payementsServices;
 	
@@ -92,7 +89,10 @@ public class PayementsRestController {
 			@Parameter(description = "Payement date (yyyy-MM-dd")
 			@RequestPart("date") String date,
 			@Parameter(description = "Payement type")
-			@RequestPart("type") PayementType type) throws IOException { 
+			@RequestPart("type") PayementType type) throws IOException {
+				if(!file.getContentType().equals("application/pdf")) {
+					throw new ResponseStatusException(HttpStatus.UNSUPPORTED_MEDIA_TYPE,"Le fichier doit être un pdf");
+				}
 		return payementsServices.savePayement(file, amount, studentCode, date, type);
 	}
 //Méthode permettant de consulter le fichier
@@ -101,4 +101,59 @@ public class PayementsRestController {
 		return payementsServices.getPayementFile(payementId);
 		
 	}
-}
+
+	@GetMapping(path="/payements/types")
+	public PayementType[] listeType(){
+		return PayementType.values();
+	}
+
+	@GetMapping(path = "/payements/status")
+	public PayementStatut[]getAllStatus(){
+		return PayementStatut.values();
+	}
+
+	@GetMapping(path = "/payement-options")
+	public ResponseEntity<PayementOptionsDto> gstPayementOptions(){
+		List<String> types=Arrays.stream(PayementType.values())
+		                          .map(Enum::name).collect(Collectors.toList());
+		List<String> statuts = Arrays.stream(PayementStatut.values())
+		                          .map(Enum::name).collect(Collectors.toList());
+		PayementOptionsDto dto = new PayementOptionsDto(types, statuts);
+      return ResponseEntity.ok(dto);
+	}
+
+	@DeleteMapping("payement/{id}")
+	public ResponseEntity<Void> deletePayement(@PathVariable Long id){
+		boolean deleteP = payementsServices.deletePayById(id);
+		if (deleteP)
+		{return ResponseEntity.noContent().build();
+		}else{
+			return ResponseEntity.notFound().build();
+		}
+	}
+
+	@PostMapping(path = "/uploadFichier", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<?> addPayement(
+		
+			@RequestParam("file") MultipartFile file,
+		
+			@RequestParam("date") String date, 
+		
+			@RequestParam("amount") Double amount,
+			
+			@RequestParam("type") String type,
+		
+			@RequestParam("statut") String statut,
+			@RequestParam("firstname") String firstname,
+			@RequestParam("lastname") String lastname
+			){
+				System.out.println("File: "+(file!=null?file.getOriginalFilename():"null"));
+				System.out.println("Date :"+date);
+				System.out.println("Amount :"+amount);
+				System.out.println("type :"+type);
+				System.out.println("statut :"+statut);
+				System.out.println("firstname :"+firstname);
+				System.out.println("lastname :"+lastname);
+				return payementsServices.ajoutPay(file, date, amount, type, statut,firstname,lastname);
+			}
+		}

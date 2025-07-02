@@ -8,7 +8,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+
+import javax.imageio.IIOException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +39,7 @@ import lombok.RequiredArgsConstructor;
 public class PayementsServices {
 	private final PayementRepository payementRepository;
 	private final StudentRepository studentRepository;
-	private PayementsDto dto;
+	private static final  String UPLOAD_DIR = "/upload";//Crée un dossier ou configure un chemin absolu
 
 	public PayementsDto toDto (Payements p) {
 		return PayementsDto.builder()
@@ -79,7 +82,7 @@ public class PayementsServices {
 				.statut(PayementStatut.CREATED)
 				.file(filePath.toUri().toString())
 				.build();
-		return ResponseEntity.ok(payementRepository.save(paye));		
+		return ResponseEntity.ok(payementRepository.save(paye));
 	}
 	public byte[]getPayementFile(Long payementId) throws IOException{
 		Payements payement = payementRepository.findById(payementId).get();
@@ -94,4 +97,50 @@ public class PayementsServices {
 		
 	}
 
+	public boolean deletePayById(Long id){
+       if(payementRepository.existsById(id)){
+		payementRepository.deleteById(id);
+		return true;
+	   }else{
+		return false;
+	   }
+	}
+
+	public ResponseEntity<?> ajoutPay(MultipartFile file, String datePay, Double amount,
+	String type,String statut,String firstname,String lastname ){
+		//Chercher l'étudiant(à adapter selon la logique métier)
+		try{
+		Optional<Student> optionalStudent = studentRepository.findByFirstnameAndLastname(firstname, lastname);
+        if(optionalStudent.isEmpty()){
+		   return ResponseEntity.badRequest().body("Student's not found!!!");
+			}
+		
+			Student student = optionalStudent.get();
+			//sauvegarder le fichier
+            String file_name = System.currentTimeMillis()+'_'+file.getOriginalFilename();
+			Path filPath = Paths.get(UPLOAD_DIR+file_name);
+			Files.createDirectories(filPath.getParent());
+			Files.write(filPath, file.getBytes());
+
+			// Construire l'entité Payement
+            Payements payement = Payements.builder()
+			                            .datePayement(LocalDate.parse(datePay))
+										.amount(amount)
+										.type(PayementType.valueOf(type))
+										.statut(PayementStatut.valueOf(statut))
+										.file(file_name)
+										.student(student)
+			                               .build();
+          //Sauvegarde
+		Payements saved = payementRepository.save(payement);
+		return ResponseEntity.ok(saved);
+	}catch(IOException e){
+		return ResponseEntity.status(500).body("Erreur lors de l'enregistrement du fichier"+e.getMessage());
+
+	}catch(Exception e){
+		return ResponseEntity.badRequest().body("Erreur "+ e.getMessage());
+
+
+	}
+}
 }
